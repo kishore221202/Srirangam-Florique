@@ -2,7 +2,7 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-ng-flower-shop-2025-payment'
-DEBUG = True
+DEBUG = False
 ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
@@ -61,3 +61,4 @@ SHOP_BANK_NAME  = 'State Bank of India'
 SHOP_BANK_ACC   = '1234567890'
 SHOP_BANK_IFSC  = 'SBIN0001234'
 SHOP_BANK_HOLDER= 'NG Srirangam Flower Shop'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
