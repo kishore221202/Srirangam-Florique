@@ -1,0 +1,129 @@
+{% extends 'shop/base.html' %}
+{% block content %}
+<div style="max-width:700px;margin:30px auto;padding:0 16px;">
+  <h2 style="color:var(--purple);margin-bottom:20px;">📋 Checkout</h2>
+
+  <form method="post">{% csrf_token %}
+
+    <!-- Customer -->
+    <div class="card" style="padding:24px;margin-bottom:20px;">
+      <h3 style="color:var(--purple);margin-bottom:16px;">👤 Customer Details</h3>
+      <div class="form-group">
+        <label>உங்கள் பெயர் (Name) *</label>
+        <input type="text" name="name" required placeholder="Full Name">
+      </div>
+      <div class="form-group">
+        <label>Phone / WhatsApp Number *</label>
+        <input type="tel" name="phone" required placeholder="9876543210">
+      </div>
+      <div class="form-group">
+        <label>Delivery Address *</label>
+        <textarea name="address" required rows="3" placeholder="முழு முகவரி..."></textarea>
+      </div>
+      <div class="form-group">
+        <label>Special Notes (Optional)</label>
+        <textarea name="notes" rows="2" placeholder="சிறப்பு குறிப்புகள்..."></textarea>
+      </div>
+    </div>
+
+    <!-- Order Summary -->
+    <div class="card" style="padding:20px;margin-bottom:20px;">
+      <h3 style="color:var(--purple);margin-bottom:14px;">🛒 Order Summary</h3>
+      {% for item in items %}
+      <div style="display:flex;justify-content:space-between;padding:7px 0;
+        border-bottom:1px solid var(--border);font-size:.9rem;">
+        <span>{{ item.product.name }} × {{ item.quantity }}</span>
+        <span style="font-weight:700;">₹{{ item.subtotal }}</span>
+      </div>
+      {% endfor %}
+      <div style="display:flex;justify-content:space-between;margin-top:12px;font-size:1.1rem;font-weight:800;">
+        <span>Total:</span><span style="color:var(--purple);">₹{{ total }}</span>
+      </div>
+    </div>
+
+    <!-- Payment Type -->
+    <div class="card" style="padding:24px;margin-bottom:20px;">
+      <h3 style="color:var(--purple);margin-bottom:6px;">💳 Payment Type</h3>
+      <p style="color:var(--muted);font-size:.85rem;margin-bottom:16px;">
+        தேர்ந்தெடுக்கவும் — Next step-ல் payment details காட்டும்
+      </p>
+
+      <!-- UPI -->
+      <label>
+        <input type="radio" name="payment_type" value="upi" id="pt_upi" checked
+          onchange="setPay(this.value)" style="display:none;">
+        <div class="pay-card" id="card_upi" onclick="document.getElementById('pt_upi').checked=true;setPay('upi')">
+          <div class="pay-icon">📱</div>
+          <div class="pay-title">UPI / QR Code</div>
+          <div class="pay-desc">Google Pay, PhonePe, Paytm, BHIM — QR scan பண்ணுங்க</div>
+          <div class="info-strip" style="margin-top:10px;">
+            ✅ Instant • Safe • No extra charges
+          </div>
+        </div>
+      </label>
+
+      <!-- CASH -->
+      <label>
+        <input type="radio" name="payment_type" value="cash" id="pt_cash"
+          onchange="setPay(this.value)" style="display:none;">
+        <div class="pay-card" id="card_cash" onclick="document.getElementById('pt_cash').checked=true;setPay('cash')">
+          <div class="pay-icon">💵</div>
+          <div class="pay-title">Cash on Delivery</div>
+          <div class="pay-desc">Delivery-ல் cash கொடுங்க — ₹{{ total }}</div>
+          <div class="info-strip amber" style="margin-top:10px;">
+            ⚠️ Delivery time-ல் exact cash வைத்திருக்கவும்
+          </div>
+        </div>
+      </label>
+
+      <!-- NET BANKING -->
+      <label>
+        <input type="radio" name="payment_type" value="netbank" id="pt_netbank"
+          onchange="setPay(this.value)" style="display:none;">
+        <div class="pay-card" id="card_netbank" onclick="document.getElementById('pt_netbank').checked=true;setPay('netbank')">
+          <div class="pay-icon">🏦</div>
+          <div class="pay-title">Net Banking / Bank Transfer</div>
+          <div class="pay-desc">Direct bank transfer — NEFT / IMPS / RTGS</div>
+          <div class="info-strip" style="margin-top:10px;">
+            Bank details next page-ல் காட்டும்
+          </div>
+        </div>
+      </label>
+
+      <!-- ADVANCE -->
+      <label>
+        <input type="radio" name="payment_type" value="advance" id="pt_advance"
+          onchange="setPay(this.value)" style="display:none;">
+        <div class="pay-card" id="card_advance" onclick="document.getElementById('pt_advance').checked=true;setPay('advance')">
+          <div class="pay-icon">💰</div>
+          <div class="pay-title">Advance Payment (50% Now)</div>
+          <div class="pay-desc">இப்போது 50% pay பண்ணுங்க, balance delivery-ல்</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;">
+            <div style="background:var(--purple-l);border-radius:10px;padding:10px;text-align:center;">
+              <div style="font-size:.75rem;color:var(--muted);">Now Pay</div>
+              <div style="font-weight:800;color:var(--purple);">₹{{ advance }}</div>
+            </div>
+            <div style="background:#fee2e2;border-radius:10px;padding:10px;text-align:center;">
+              <div style="font-size:.75rem;color:var(--muted);">Balance Due</div>
+              <div style="font-weight:800;color:var(--red);">₹{{ balance }}</div>
+            </div>
+          </div>
+        </div>
+      </label>
+    </div>
+
+    <button type="submit" class="btn btn-purple btn-block" style="font-size:1.05rem;">
+      Continue to Payment →
+    </button>
+  </form>
+</div>
+
+<script>
+function setPay(v) {
+  ['upi','cash','netbank','advance'].forEach(x=>{
+    document.getElementById('card_'+x).classList.toggle('selected', x===v);
+  });
+}
+setPay('upi');
+</script>
+{% endblock %}

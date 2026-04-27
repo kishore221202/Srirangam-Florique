@@ -1,0 +1,72 @@
+{% extends 'shop/base.html' %}
+{% block content %}
+<div style="max-width:820px;margin:30px auto;padding:0 16px;">
+  <h2 style="color:var(--purple);margin-bottom:20px;">📋 All Orders</h2>
+
+  {% for order in orders %}
+  <div class="card" style="padding:20px;margin-bottom:16px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:12px;">
+      <div>
+        <span style="font-weight:800;color:var(--purple);font-size:1.05rem;">Order #{{ order.id }}</span>
+        <span style="color:var(--muted);font-size:.82rem;margin-left:10px;">{{ order.created_at|date:"d M Y, h:i A" }}</span>
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;">
+        {% if order.payment_type == 'upi' %}
+          <span class="sbadge sbadge-purple">📱 UPI</span>
+        {% elif order.payment_type == 'cash' %}
+          <span class="sbadge sbadge-amber">💵 Cash</span>
+        {% elif order.payment_type == 'netbank' %}
+          <span class="sbadge sbadge-blue">🏦 NetBank</span>
+        {% elif order.payment_type == 'advance' %}
+          <span class="sbadge sbadge-purple">💰 Advance</span>
+        {% endif %}
+
+        {% if order.payment_status == 'paid' %}
+          <span class="sbadge sbadge-green">✅ Paid</span>
+        {% elif order.payment_status == 'advance_paid' %}
+          <span class="sbadge sbadge-purple">💰 Adv Paid</span>
+        {% elif order.payment_status == 'pending' %}
+          <span class="sbadge sbadge-amber">⏳ Pending</span>
+        {% endif %}
+
+        {% if order.status == 'delivered' %}
+          <span class="sbadge sbadge-green">🚚 Delivered</span>
+        {% elif order.status == 'confirmed' %}
+          <span class="sbadge sbadge-blue">✅ Confirmed</span>
+        {% elif order.status == 'pending' %}
+          <span class="sbadge sbadge-amber">🕐 Pending</span>
+        {% elif order.status == 'cancelled' %}
+          <span class="sbadge sbadge-red">❌ Cancelled</span>
+        {% endif %}
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:.88rem;margin-bottom:10px;">
+      <div>👤 <b>{{ order.name }}</b></div>
+      <div>📞 {{ order.phone }}</div>
+      <div style="grid-column:1/-1;">📍 {{ order.address }}</div>
+    </div>
+
+    <div style="border-top:1px solid var(--border);padding-top:10px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+      <div style="font-size:.9rem;">
+        <b>Total: ₹{{ order.total }}</b>
+        {% if order.payment_type == 'advance' %}
+        &nbsp;|&nbsp;<span style="color:var(--purple);">Paid: ₹{{ order.advance_amount }}</span>
+        &nbsp;|&nbsp;<span style="color:var(--red);">Balance: ₹{{ order.balance_amount }}</span>
+        {% endif %}
+        {% if order.upi_ref %}
+        &nbsp;|&nbsp;<span style="color:var(--muted);">Ref: {{ order.upi_ref }}</span>
+        {% endif %}
+      </div>
+      <span style="color:var(--muted);font-size:.82rem;">{{ order.items.count }} items</span>
+    </div>
+  </div>
+  {% empty %}
+  <div style="text-align:center;padding:70px;color:var(--muted);">
+    <div style="font-size:3.5rem;">📋</div>
+    <p style="margin:14px 0;">No orders yet!</p>
+    <a href="/" class="btn btn-purple">🌸 Order Now</a>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

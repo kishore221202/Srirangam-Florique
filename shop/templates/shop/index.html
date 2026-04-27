@@ -1,0 +1,81 @@
+{% extends 'shop/base.html' %}
+{% block content %}
+<div style="max-width:1140px;margin:0 auto;padding:24px 16px;">
+
+  <!-- HERO -->
+  <div style="text-align:center;padding:28px 0 16px;">
+    <h1 style="font-size:2rem;color:var(--purple);margin-bottom:6px;">🌸 NG Srirangam Flower Shop</h1>
+    <p style="color:var(--muted);font-size:1rem;">Fresh Garlands &nbsp;|&nbsp; பட்டு மாலை &nbsp;|&nbsp; WhatsApp Orders</p>
+  </div>
+
+  <!-- CATEGORY FILTER -->
+  <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:16px 0 24px;">
+    <a href="/" style="padding:8px 20px;border-radius:20px;text-decoration:none;font-weight:700;font-size:.88rem;
+      {% if not selected_cat %}background:var(--purple);color:#fff;{% else %}background:#fff;color:var(--purple);border:2px solid var(--purple);{% endif %}">
+      🌸 All
+    </a>
+    {% for cat in categories %}
+    <a href="/?cat={{ cat.slug }}" style="padding:8px 20px;border-radius:20px;text-decoration:none;font-weight:700;font-size:.88rem;
+      {% if selected_cat == cat.slug %}background:var(--purple);color:#fff;{% else %}background:#fff;color:var(--purple);border:2px solid var(--purple);{% endif %}">
+      {{ cat.icon }} {{ cat.name }}
+    </a>
+    {% endfor %}
+  </div>
+
+  <!-- PRODUCTS GRID -->
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:20px;">
+    {% for p in products %}
+    <div class="card" style="overflow:hidden;transition:transform .2s;"
+      onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform=''">
+
+      <!-- IMAGE -->
+      <div style="height:160px;background:linear-gradient(135deg,#ede9fe,#fce7f3);
+        position:relative;cursor:pointer;overflow:hidden;"
+        onclick="openModal({{ p.pk }},'{% if p.get_image %}{{ p.get_image }}{% endif %}','{{ p.name|escapejs }}','{{ p.price }}')">
+
+        {% if p.get_image %}
+          <img src="{{ p.get_image }}" alt="{{ p.name }}"
+            style="width:100%;height:160px;object-fit:cover;">
+        {% else %}
+          <div style="height:100%;display:flex;align-items:center;justify-content:center;font-size:3.5rem;">{{ p.emoji }}</div>
+        {% endif %}
+
+        <!-- View overlay -->
+        <div style="position:absolute;inset:0;background:rgba(0,0,0,0);transition:.2s;
+          display:flex;align-items:center;justify-content:center;font-size:.8rem;
+          color:#fff;font-weight:700;opacity:0;" class="img-overlay">🔍 பார்க்க</div>
+
+        {% if p.badge %}
+        <div style="position:absolute;top:8px;left:8px;background:var(--amber);
+          color:#fff;font-size:.7rem;font-weight:700;padding:3px 10px;border-radius:10px;">{{ p.badge }}</div>
+        {% endif %}
+      </div>
+
+      <div style="padding:14px;">
+        <div style="font-weight:700;font-size:.9rem;line-height:1.35;margin-bottom:3px;">{{ p.name }}</div>
+        <div style="color:var(--muted);font-size:.78rem;margin-bottom:10px;">{{ p.description }}</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <span style="font-size:1.15rem;font-weight:800;color:var(--purple);">₹{{ p.price }}</span>
+          <button onclick="addToCart({{ p.pk }},this)" class="btn btn-purple btn-sm">🛒 Add</button>
+        </div>
+        {% if p.get_image %}
+        <button onclick="openModal({{ p.pk }},'{{ p.get_image }}','{{ p.name|escapejs }}','{{ p.price }}')"
+          style="margin-top:8px;width:100%;padding:6px;border-radius:9px;border:1.5px solid var(--purple);
+          background:#fff;color:var(--purple);cursor:pointer;font-size:.8rem;font-weight:700;">
+          🖼️ Image பார்க்க
+        </button>
+        {% endif %}
+      </div>
+    </div>
+    {% empty %}
+    <div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--muted);">
+      <div style="font-size:3rem;">🌸</div><p style="margin-top:10px;">No products found.</p>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<style>
+.card:hover .img-overlay{opacity:1!important;background:rgba(0,0,0,.3)!important;}
+</style>
+{% endblock %}
