@@ -64,3 +64,5 @@ SHOP_BANK_IFSC  = 'SBIN0001234'
 SHOP_BANK_HOLDER= 'NG Srirangam Flower Shop'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 # test change
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
