@@ -63,3 +63,4 @@ SHOP_BANK_ACC   = '1234567890'
 SHOP_BANK_IFSC  = 'SBIN0001234'
 SHOP_BANK_HOLDER= 'NG Srirangam Flower Shop'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+# test change
